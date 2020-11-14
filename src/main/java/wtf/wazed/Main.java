@@ -24,6 +24,7 @@ public class Main {
 
     public static void main(String[] args) throws LoginException {
         new Main();
+        JDABuilder builder = JDABuilder.createDefault("Du dumme Snitch nutte");
         builder.setActivity(Activity.watching("Jona verkacken lmao"));
         builder.addEventListeners(new MessageEventHandler());
         jda = builder.build();
