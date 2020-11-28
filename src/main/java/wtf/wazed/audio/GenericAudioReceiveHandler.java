@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.audio.OpusPacket;
 import net.dv8tion.jda.api.audio.UserAudio;
 import net.dv8tion.jda.api.entities.User;
 import org.jetbrains.annotations.NotNull;
+import wtf.wazed.Main;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -35,6 +36,18 @@ public class GenericAudioReceiveHandler implements AudioReceiveHandler {
         byte[] bytes = combinedAudio.getAudioData(0.4f);
 
     }
+    public byte[] getAudio(byte[] bytes){
+         BUFFER.add(bytes);
+        List<Byte> byteList = new ArrayList<>();
+        for (byte[] bytes1 : BUFFER) {
+            for (byte b : bytes1) {
+                byteList.add(b);
+            }
+        } Byte[] bytes1 = byteList.toArray(new Byte[0]);
+            byte[] test = toPrimitives(bytes1);
+            return test;
+    }
+
 
     private void safeToBufferAndCreateFile(byte[] bytes){
         BUFFER.add(bytes);
@@ -80,6 +93,7 @@ public class GenericAudioReceiveHandler implements AudioReceiveHandler {
 
     }
 
+
     @Override
     public void handleEncodedAudio(@NotNull OpusPacket packet) {
 
@@ -87,11 +101,15 @@ public class GenericAudioReceiveHandler implements AudioReceiveHandler {
 
     @Override
     public void handleUserAudio(@NotNull UserAudio userAudio) {
-
+        if(userAudio.getUser().isBot())return;
         byte[] bytes = userAudio.getAudioData(0.4f);
-        safeToBufferAndCreateUserFile(bytes, userAudio.getUser());
-
+        try {
+            Main.client.handleByteArray(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
 
     @Override
     public boolean canReceiveCombined() {
